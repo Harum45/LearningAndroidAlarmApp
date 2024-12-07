@@ -1,25 +1,42 @@
-﻿namespace SimpleAlarmApp
+﻿using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.ObjectiveC;
+
+namespace SimpleAlarmApp
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        public ObservableCollection<Alarm> Alarms { get; set; }
+
 
         public MainPage()
         {
             InitializeComponent();
+            Alarms = new ObservableCollection<Alarm>();
+            alarmListView.ItemsSource = Alarms;
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private void OnSetAlarmButtonClicked(object sender, EventArgs e)
         {
-            count++;
+            var alarmTime = alarmTimePicker.Time;
+            var repeatOption = repeatPicker.SelectedItem?.ToString() ?? "なし";
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+            Alarms.Add(new Alarm
+            {
+                Time = alarmTime.ToString(@"hh\:mm"),
+                Repeat = repeatOption
+            });
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            DisplayAlert("アラーム設定", $"アラームを {alarmTime} に設定しました。", "OK");
+
+
         }
+
     }
 
+    public class Alarm
+    {
+        public string Time { get; set; }
+        public string Repeat { get; set; }
+    }
 }
